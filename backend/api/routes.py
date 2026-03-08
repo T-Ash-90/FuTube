@@ -194,7 +194,7 @@ def get_feed():
         feed_url = f"https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}"
         feed = feedparser.parse(feed_url)
 
-        for entry in feed.entries[:15]:
+        for entry in feed.entries[:10]:
             feed_videos.append({
                 "video_id": entry.yt_videoid,
                 "title": entry.title,
