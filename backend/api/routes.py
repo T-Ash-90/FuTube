@@ -195,14 +195,25 @@ def get_feed():
         feed = feedparser.parse(feed_url)
 
         for entry in feed.entries[:10]:
+            link = getattr(entry, "link", "")
+            if not link:
+                continue
+
+            if "watch?v=" in link:
+                video_id = link.split("watch?v=")[-1]
+            else:
+                continue
+
             feed_videos.append({
-                "video_id": entry.yt_videoid,
-                "title": entry.title,
-                "url": entry.link,
-                "published": entry.published,
+                "video_id": video_id,
+                "title": getattr(entry, "title", ""),
+                "url": link,
+                "published": getattr(entry, "published", ""),
                 "channel_id": channel_id,
                 "channel_title": sub.get("channel_title"),
-                "channel_url": sub.get("channel_url")
+                "channel_url": sub.get("channel_url"),
+                "thumbnail": f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg",
+                "duration": None
             })
 
     feed_videos.sort(key=lambda v: datetime.fromisoformat(v["published"]), reverse=True)
