@@ -17,16 +17,16 @@ FuTube started as a self-learning project to practice Python, Flask, JavaScript,
 
 #### Clone the repository:
 
-<pre> ```git clone <your-repo-url>
-cd futube``` </pre>
+<pre> git clone <your-repo-url>
+cd futube</pre>
 
 #### Create and activate a virtual environment:
 
-<pre> ```source .venv/bin/activate   # On Windows: .venv\Scripts\activate``` </pre>
+<pre>source .venv/bin/activate   # On Windows: .venv\Scripts\activate</pre>
 
 #### Install dependencies:
 
-<pre> ```pip install -r requirements.txt``` </pre>
+<pre>pip install -r requirements.txt</pre>
 
 Make sure you have Python 3.10+ installed.
 
