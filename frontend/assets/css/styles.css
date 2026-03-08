@@ -105,25 +105,104 @@ nav a:hover {
 }
 
 /* ---------- Subscriptions List ---------- */
+#subscriptions-list {
+    display: flex;
+    justify-content: center;
+}
+
 #subscriptions-list ul {
-    list-style-type: none;
+    list-style: none;
     padding: 0;
     margin: 0;
+    width: 100%;
+    max-width: 600px;
 }
 
 #subscriptions-list li {
-    background: #fff;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 6px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+    justify-content: space-between;
+    background: #fff;
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
 }
 
-#subscriptions-list li button {
+#subscriptions-list li:last-child {
+    border-bottom: none;
+}
+
+#subscriptions-list li img.channel-logo {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 12px;
+}
+
+#subscriptions-list li .sub-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+#subscriptions-list li .sub-info span {
+    font-size: 16px;
+    font-weight: 500;
+    color: #111;
+}
+
+#subscriptions-list li div button {
     margin-left: 5px;
-    font-size: 12px;
-    padding: 5px 8px;
+    font-size: 13px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+#subscriptions-list li div button:hover {
+    opacity: 0.85;
+}
+
+#subscriptions-list li div button:first-child {
+    background: #0073e6;
+    color: #fff;
+}
+
+#subscriptions-list li div button:last-child {
+    background: #f44336;
+    color: #fff;
+}
+
+/* ---------- Search Page ---------- */
+#search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    gap: 10px;
+}
+
+#search-container input {
+    width: 300px;
+    padding: 8px 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+#search-container button {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: none;
+    border-radius: 6px;
+    background-color: #0073e6;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+#search-container button:hover {
+    opacity: 0.85;
 }

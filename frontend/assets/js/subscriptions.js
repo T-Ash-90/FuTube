@@ -52,7 +52,10 @@ async function loadSubscriptions() {
 // -------------------
 // Unsubscribe from a channel
 // -------------------
-async function unsubscribe(channelId) {
+async function unsubscribe(channelId, channelTitle) {
+    const confirmed = confirm(`Are you sure you want to unsubscribe from "${channelTitle}"?`);
+    if (!confirmed) return;
+
     try {
         const res = await fetch(`/api/subscriptions/${channelId}`, { method: "DELETE" });
 
