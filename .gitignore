@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+data/subscriptions.csv
+data/cache/
+downloads/
+.DS_Store
+Thumbs.db
+venv/
+.env/
+.venv/
