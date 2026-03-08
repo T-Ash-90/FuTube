@@ -222,3 +222,17 @@ def get_feed():
     FEED_CACHE["last_updated"] = now
 
     return jsonify(feed_videos), 200
+
+# --------------------------
+# Reset the feed cache
+# --------------------------
+@bp.route("/api/feed/refresh", methods=["POST"])
+def refresh_feed():
+    global FEED_CACHE
+
+    FEED_CACHE["feed"] = []
+    FEED_CACHE["last_updated"] = 0
+
+    print("Feed cache has been reset.")
+
+    return jsonify({"message": "Feed cache reset successfully"}), 200
