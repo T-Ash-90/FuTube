@@ -1,0 +1,92 @@
+/* ---------- Global ---------- */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f5f5f5;
+}
+
+h1 {
+    text-align: center;
+}
+
+nav {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+nav a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: #0073e6;
+    font-weight: bold;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* ---------- Feed List ---------- */
+#feed-list ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#feed-list li {
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+}
+
+#feed-list li a.video-title {
+    font-weight: bold;
+    text-decoration: none;
+    color: #0073e6;
+    font-size: 16px;
+}
+
+#feed-list li a.video-title:hover {
+    text-decoration: underline;
+}
+
+#feed-list li p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+#feed-list li a.channel-link {
+    color: #555;
+    text-decoration: none;
+    font-style: italic;
+}
+
+#feed-list li a.channel-link:hover {
+    text-decoration: underline;
+}
+
+/* ---------- Subscriptions List ---------- */
+#subscriptions-list ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#subscriptions-list li {
+    background: #fff;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+}
+
+#subscriptions-list li button {
+    margin-left: 5px;
+    font-size: 12px;
+    padding: 5px 8px;
+}
