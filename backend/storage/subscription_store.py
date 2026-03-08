@@ -5,6 +5,13 @@ from backend.utils.config import DATA_DIR
 SUBSCRIPTIONS_FILE = os.path.join(DATA_DIR, "subscriptions.csv")
 
 
+def clean_channel_title(title):
+    """Remove quotes and trim whitespace from channel titles."""
+    if not title:
+        return ""
+    return title.replace('"', "").strip()
+
+
 def normalize_headers(row):
     mapping = {
         "Channel ID": "channel_id",
@@ -14,16 +21,49 @@ def normalize_headers(row):
         "channel_url": "channel_url",
         "channel_title": "channel_title"
     }
-    return {mapping.get(k, k): v for k, v in row.items()}
+
+    normalized = {mapping.get(k, k): v for k, v in row.items()}
+
+    if "channel_title" in normalized:
+        normalized["channel_title"] = clean_channel_title(
+            normalized["channel_title"]
+        )
+
+    return normalized
 
 
 def sort_subscriptions(rows):
-    return sorted(rows, key=lambda r: r.get("channel_title", "").lower())
+    """Sort rows alphabetically by channel_title (case-insensitive)."""
+    return sorted(
+        rows,
+        key=lambda r: clean_channel_title(
+            r.get("channel_title", "")
+        ).lower()
+    )
+
+
+def write_csv(filepath, rows):
+    """Write rows to CSV in canonical format."""
+    canonical_fields = ["channel_id", "channel_url", "channel_title"]
+
+    with open(filepath, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=canonical_fields)
+        writer.writeheader()
+
+        for row in rows:
+            writer.writerow({
+                "channel_id": row.get("channel_id", ""),
+                "channel_url": row.get("channel_url", ""),
+                "channel_title": clean_channel_title(
+                    row.get("channel_title", "")
+                )
+            })
 
 
 def normalize_csv_file(filepath):
-    canonical_fields = ["channel_id", "channel_url", "channel_title"]
-
+    """
+    Normalize headers, clean titles, and ensure sorted order.
+    """
     if not os.path.exists(filepath):
         return
 
@@ -32,16 +72,7 @@ def normalize_csv_file(filepath):
         rows = [normalize_headers(r) for r in reader]
 
     rows = sort_subscriptions(rows)
-
-    with open(filepath, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=canonical_fields)
-        writer.writeheader()
-        for row in rows:
-            writer.writerow({
-                "channel_id": row.get("channel_id", ""),
-                "channel_url": row.get("channel_url", ""),
-                "channel_title": row.get("channel_title", "")
-            })
+    write_csv(filepath, rows)
 
 
 class SubscriptionStore:
@@ -49,74 +80,52 @@ class SubscriptionStore:
         self.filepath = filepath
 
         if not os.path.exists(self.filepath):
-            with open(self.filepath, "w", newline="", encoding="utf-8") as f:
-                writer = csv.writer(f)
-                writer.writerow(["channel_id", "channel_url", "channel_title"])
+            write_csv(self.filepath, [])
+        else:
+            normalize_csv_file(self.filepath)
 
     def list_subscriptions(self):
-        subscriptions = []
-
+        """Return all subscriptions."""
         with open(self.filepath, newline="", encoding="utf-8") as f:
             reader = csv.DictReader(f)
-            for row in reader:
-                subscriptions.append(normalize_headers(row))
+            rows = [normalize_headers(r) for r in reader]
 
-        return subscriptions
+        return rows
 
     def add_subscription(self, channel_id, channel_url, channel_title):
+        """Add new subscription and keep CSV sorted."""
         subscriptions = self.list_subscriptions()
-        existing_ids = [s["channel_id"] for s in subscriptions]
 
+        existing_ids = [s["channel_id"] for s in subscriptions]
         if channel_id in existing_ids:
             return False
 
         subscriptions.append({
             "channel_id": channel_id,
             "channel_url": channel_url,
-            "channel_title": channel_title
+            "channel_title": clean_channel_title(channel_title)
         })
 
         subscriptions = sort_subscriptions(subscriptions)
-
-        canonical_fields = ["channel_id", "channel_url", "channel_title"]
-
-        with open(self.filepath, "w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=canonical_fields)
-            writer.writeheader()
-            for sub in subscriptions:
-                writer.writerow({
-                    "channel_id": sub.get("channel_id", ""),
-                    "channel_url": sub.get("channel_url", ""),
-                    "channel_title": sub.get("channel_title", "")
-                })
+        write_csv(self.filepath, subscriptions)
 
         return True
 
     def remove_subscription(self, channel_id):
+        """Remove subscription and keep CSV sorted."""
         target_id = channel_id.strip()
 
         subscriptions = self.list_subscriptions()
 
-        remaining_subs = [
+        remaining = [
             s for s in subscriptions
             if s["channel_id"].strip() != target_id
         ]
 
-        if len(remaining_subs) == len(subscriptions):
+        if len(remaining) == len(subscriptions):
             return False
 
-        remaining_subs = sort_subscriptions(remaining_subs)
-
-        canonical_fields = ["channel_id", "channel_url", "channel_title"]
-
-        with open(self.filepath, "w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=canonical_fields)
-            writer.writeheader()
-            for sub in remaining_subs:
-                writer.writerow({
-                    "channel_id": sub.get("channel_id", ""),
-                    "channel_url": sub.get("channel_url", ""),
-                    "channel_title": sub.get("channel_title", "")
-                })
+        remaining = sort_subscriptions(remaining)
+        write_csv(self.filepath, remaining)
 
         return True

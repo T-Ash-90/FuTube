@@ -10,14 +10,21 @@ async function loadSubscriptions() {
         const res = await fetch("/api/subscriptions");
         if (!res.ok) throw new Error("Failed to load subscriptions");
 
-        const subscriptions = await res.json();
+        let subscriptions = await res.json();
 
         if (!subscriptions.length) {
             subscriptionsContainer.innerHTML = "<p>No subscriptions yet.</p>";
             return;
         }
 
-        // Render as list
+        subscriptions.sort((a, b) => {
+            const titleA = a.channel_title.toLowerCase();
+            const titleB = b.channel_title.toLowerCase();
+            if (titleA < titleB) return -1;
+            if (titleA > titleB) return 1;
+            return 0;
+        });
+
         const ul = document.createElement("ul");
         subscriptions.forEach(sub => {
             const li = document.createElement("li");
@@ -55,7 +62,6 @@ async function unsubscribe(channelId) {
             return;
         }
 
-        // Refresh the list after removing
         loadSubscriptions();
     } catch (err) {
         console.error(err);
@@ -64,7 +70,7 @@ async function unsubscribe(channelId) {
 }
 
 // -------------------
-// Add subscription (if you have inputs for adding)
+// Add subscription
 // -------------------
 const addBtn = document.getElementById("add_subscription_btn");
 if (addBtn) {
@@ -90,11 +96,9 @@ if (addBtn) {
                 const data = await res.json();
                 alert(data.error || "Failed to add subscription");
             } else {
-                // Clear inputs
                 channelIdInput.value = "";
                 channelUrlInput.value = "";
                 channelTitleInput.value = "";
-                // Reload subscriptions
                 loadSubscriptions();
             }
         } catch (err) {
