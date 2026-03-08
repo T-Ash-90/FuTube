@@ -7,6 +7,14 @@ body {
 
 h1 {
     text-align: center;
+    font-family: 'Arial', sans-serif;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #333;
+    line-height: 1.2;
+    margin: 20px 0;
+    padding: 10px 0;
+    letter-spacing: 2px;
 }
 
 nav {
@@ -22,7 +30,7 @@ nav a {
     text-decoration: none;
     color: #111;
     font-weight: 500;
-    font-size: clamp(0.75rem, 3vw, 1.5rem);
+    font-size: clamp(1rem, 2vw, 1.5rem);
     padding: 4px 8px;
     transition: all 0.3s ease;
     border-radius: 2px;
