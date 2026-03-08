@@ -53,7 +53,7 @@ async function loadSubscriptions() {
 // Unsubscribe from a channel
 // -------------------
 async function unsubscribe(channelId, channelTitle) {
-    const confirmed = confirm(`Are you sure you want to unsubscribe from "${channelTitle}"?`);
+    const confirmed = confirm(`Are you sure you want to unsubscribe?`);
     if (!confirmed) return;
 
     try {
