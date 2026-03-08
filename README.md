@@ -17,7 +17,7 @@ FuTube started as a self-learning project to practice Python, Flask, JavaScript,
 
 #### Clone the repository:
 
-<pre> git clone <your-repo-url>
+<pre>git clone <your-repo-url>
 cd futube</pre>
 
 #### Create and activate a virtual environment:
@@ -38,7 +38,7 @@ Run the App in a Browser.
 
 Start the Flask server with:
 
-<pre> ```python3 run.py``` </pre>
+<pre>python3 run.py</pre>
 
 Then open your browser and navigate to:
 http://127.0.0.1:5000
