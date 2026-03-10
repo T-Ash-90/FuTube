@@ -107,6 +107,7 @@ def search():
 @bp.route("/api/channel_videos/<channel_id>", methods=["GET"])
 def get_channel_videos(channel_id):
     import yt_dlp
+    from flask import jsonify
 
     if not channel_id:
         return jsonify({"error": "Missing channel_id"}), 400
@@ -114,32 +115,38 @@ def get_channel_videos(channel_id):
     ydl_opts = {
         "quiet": True,
         "skip_download": True,
-        "extract_flat": True,
+        "extract_flat": True
     }
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            channel_url = f"https://www.youtube.com/channel/{channel_id}"
+            channel_url = f"https://www.youtube.com/channel/{channel_id}/videos"
             result = ydl.extract_info(channel_url, download=False)
             entries = result.get("entries", [])
 
-            videos = []
-            for entry in entries[:25]:  # latest 25 videos
-                video_url = entry.get("url")
-                if not video_url.startswith("http"):
-                    video_url = f"https://www.youtube.com/watch?v={entry.get('id')}"
+        videos = []
 
-                videos.append({
-                    "id": entry.get("id"),
-                    "title": entry.get("title"),
-                    "webpage_url": video_url,
-                    "thumbnail": entry.get("thumbnail"),
-                    "duration": entry.get("duration"),
-                    "upload_date": entry.get("upload_date"),
-                    "channel_id": entry.get("channel_id"),
-                    "channel_url": f"https://www.youtube.com/channel/{entry.get('channel_id')}",
-                    "channel_title": entry.get("uploader")
-                })
+        for entry in entries[:25]:
+            video_id = entry.get("id")
+            if not video_id:
+                continue
+
+            video_url = f"https://www.youtube.com/watch?v={video_id}"
+
+            with yt_dlp.YoutubeDL({"quiet": True}) as ydl:
+                info = ydl.extract_info(video_url, download=False)
+
+            videos.append({
+                "channel_id": info.get("channel_id"),
+                "channel_title": info.get("uploader"),
+                "channel_url": f"https://www.youtube.com/channel/{info.get('channel_id')}",
+                "duration": info.get("duration"),
+                "published": info.get("upload_date"),
+                "thumbnail": f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg",
+                "title": info.get("title"),
+                "url": video_url,
+                "video_id": video_id,
+            })
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -205,15 +212,15 @@ def get_feed():
                 continue
 
             feed_videos.append({
-                "video_id": video_id,
-                "title": getattr(entry, "title", ""),
-                "url": link,
-                "published": getattr(entry, "published", ""),
                 "channel_id": channel_id,
                 "channel_title": sub.get("channel_title"),
                 "channel_url": sub.get("channel_url"),
+                "duration": None,
+                "published": getattr(entry, "published", ""),
                 "thumbnail": f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg",
-                "duration": None
+                "title": getattr(entry, "title", ""),
+                "url": link,
+                "video_id": video_id,
             })
 
     feed_videos.sort(key=lambda v: datetime.fromisoformat(v["published"]), reverse=True)
